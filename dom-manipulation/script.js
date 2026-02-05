@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function () {
     } 
 
     // Export JSON
-    exportBtn.addEventListener('click', function () {
+     function exportToJsonFile () {
         const data = JSON.stringify(quotes);
         const blob = new Blob([data], { type: 'application/json'});
         const url = URL.createObjectURL(blob);
@@ -131,23 +131,27 @@ document.addEventListener('DOMContentLoaded', function () {
         a.click();
 
         URL.revokeObjectURL(url);
-    });
+    }
 
     // Import JSON
-    importFile.addEventListener('change', function (event) {
+     function importFromJsonFile(event) {
         
-        const reader = new FileReader();
-        reader.onload = function () {
-            const importQuotes = JSON.parse(reader.result);
-            quotes.push(...importQuotes);
+        const filereader = new FileReader();
+        filereader.onload = function () {
+            const importQuotes = JSON.parse(filereader.result);
+            quotes.push(...importedQuotes);
             saveQuotes();
             alert ('Quotes imported successfully');
         };
-        reader.readAsText(event.target.files[0]);
-    });
+        filereader.readAsText(event.target.files[0]);
+    }
+    // Event listeners
+    newQuoteBtn.addEventListener('click', showRandomQuote);
+    exportBtn.addEventListener('click',exportToJsonFile);
+    importFile.addEventListener('change', importFromJsonFile);
 
     newQuoteBtn.addEventListener('click', showRandomQuote);
-
+// Initial load
     saveQuotes();
     showRandomQuote();
 });
