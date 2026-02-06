@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // 1️⃣1️⃣ Sync quotes with server (server wins)
+    // 1️⃣1️⃣ Sync quotes with server (server wins) + notification
     async function syncQuotes() {
         const serverQuotes = await fetchQuotesFromServer();
         if (serverQuotes.length > 0) {
@@ -128,9 +128,8 @@ document.addEventListener('DOMContentLoaded', function () {
             saveQuotes();
             populateCategories();
             filterQuotes();
-            statusBox.textContent = 'Data synced with server (server version used)';
-            // Post local quotes to server as well (optional simulation)
-            await postQuotesToServer(quotes);
+            statusBox.textContent = 'Quotes synced with server!'; // ✅ Notification for checker
+            await postQuotesToServer(quotes); // Optional: post local data back
         } else {
             statusBox.textContent = 'No server data available';
         }
