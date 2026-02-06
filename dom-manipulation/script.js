@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Fetch from server (simulated)
 
-    function fetchFromServer() {
+    function fetchQuotesFromServer() {
         fetch('https://jsonplaceholder.typicode.com/posts?_limit=3')
         .then(response => response.json())
         .then(serverData => {
