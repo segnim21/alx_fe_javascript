@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // 4️⃣ Populate categories dropdown
     function populateCategories() {
         categoryFilter.innerHTML = '<option value="all">All Categories</option>';
-        const categories = [...new Set(quotes.map(q => q.category))];
+        const categories = [...new Set(quotes.map(q => q.category))]; // unique categories
         categories.forEach(cat => {
             const option = document.createElement('option');
             option.value = cat;
@@ -35,12 +35,14 @@ document.addEventListener('DOMContentLoaded', function () {
         if (savedCategory) categoryFilter.value = savedCategory;
     }
 
-    // 5️⃣ Filter quotes by selected category
+    // 5️⃣ Filter quotes by category
     function filterQuotes() {
         const selected = categoryFilter.value;
         localStorage.setItem('selectedCategory', selected);
         quoteDisplay.innerHTML = '';
+
         const filtered = selected === 'all' ? quotes : quotes.filter(q => q.category === selected);
+
         filtered.forEach(q => {
             const p = document.createElement('p');
             p.textContent = q.text;
@@ -63,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
         quoteDisplay.appendChild(small);
     }
 
-    // 7️⃣ Export quotes as JSON
+    // 7️⃣ Export quotes to JSON
     function exportToJsonFile() {
         const data = JSON.stringify(quotes);
         const blob = new Blob([data], { type: 'application/json' });
@@ -106,7 +108,7 @@ document.addEventListener('DOMContentLoaded', function () {
     async function syncQuotes() {
         const serverQuotes = await fetchQuotesFromServer();
         if (serverQuotes.length > 0) {
-            quotes = serverQuotes; // Server wins
+            quotes = serverQuotes; // Server version wins
             saveQuotes();
             populateCategories();
             filterQuotes();
