@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
 
-    // 1️⃣ Load quotes from localStorage or use default quotes
+    // 1️⃣ Load quotes from localStorage or default
     let quotes = JSON.parse(localStorage.getItem('quotes')) || [
         { text: 'Learning is the road to success', category: 'Education' },
         { text: 'Code is like humor. When you have to explain it, it is bad', category: 'Programming' },
@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // 4️⃣ Populate categories dropdown
     function populateCategories() {
         categoryFilter.innerHTML = '<option value="all">All Categories</option>';
-        const categories = [...new Set(quotes.map(q => q.category))]; // unique categories
+        const categories = [...new Set(quotes.map(q => q.category))];
         categories.forEach(cat => {
             const option = document.createElement('option');
             option.value = cat;
@@ -42,7 +42,6 @@ document.addEventListener('DOMContentLoaded', function () {
         quoteDisplay.innerHTML = '';
 
         const filtered = selected === 'all' ? quotes : quotes.filter(q => q.category === selected);
-
         filtered.forEach(q => {
             const p = document.createElement('p');
             p.textContent = q.text;
@@ -91,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function () {
         reader.readAsText(event.target.files[0]);
     }
 
-    // 9️⃣ Fetch quotes from server (mock API)
+    // 9️⃣ Fetch quotes from server
     async function fetchQuotesFromServer() {
         try {
             const response = await fetch('https://jsonplaceholder.typicode.com/posts?_limit=3');
@@ -104,33 +103,52 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // 🔟 Sync quotes with server (server wins in conflicts)
+    // 🔟 Post quotes to server (mock API)
+    async function postQuotesToServer(quotesToSend) {
+        try {
+            const response = await fetch('https://jsonplaceholder.typicode.com/posts', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(quotesToSend)
+            });
+            const result = await response.json();
+            console.log('Server received:', result);
+            statusBox.textContent = 'Quotes posted to server successfully!';
+        } catch (error) {
+            console.error('Error posting quotes:', error);
+            statusBox.textContent = 'Error posting quotes to server';
+        }
+    }
+
+    // 1️⃣1️⃣ Sync quotes with server (server wins)
     async function syncQuotes() {
         const serverQuotes = await fetchQuotesFromServer();
         if (serverQuotes.length > 0) {
-            quotes = serverQuotes; // Server version wins
+            quotes = serverQuotes; // Server wins
             saveQuotes();
             populateCategories();
             filterQuotes();
             statusBox.textContent = 'Data synced with server (server version used)';
+            // Post local quotes to server as well (optional simulation)
+            await postQuotesToServer(quotes);
         } else {
             statusBox.textContent = 'No server data available';
         }
     }
 
-    // 1️⃣1️⃣ Event listeners
+    // 1️⃣2️⃣ Event listeners
     newQuoteBtn.addEventListener('click', showRandomQuote);
     categoryFilter.addEventListener('change', filterQuotes);
     exportBtn.addEventListener('click', exportToJsonFile);
     importFile.addEventListener('change', importFromJsonFile);
 
-    // 1️⃣2️⃣ Initial setup
+    // 1️⃣3️⃣ Initial load
     saveQuotes();
     populateCategories();
     filterQuotes();
     showRandomQuote();
 
-    // 1️⃣3️⃣ Periodically sync with server every 10 seconds
+    // 1️⃣4️⃣ Periodically sync with server every 10 seconds
     setInterval(syncQuotes, 10000);
 
 });
