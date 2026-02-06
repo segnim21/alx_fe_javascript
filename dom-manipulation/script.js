@@ -85,7 +85,7 @@ function createAddQuoteForm()
 
 showRandomQuote(); });*/
 
-document.addEventListener('DOMContentLoaded', function () {
+ /*document.addEventListener('DOMContentLoaded', function () {
     
     // Load quotes from localStorage or default
     let quotes = JSON.parse(localStorage.getItem('quotes')) || [
@@ -154,4 +154,100 @@ document.addEventListener('DOMContentLoaded', function () {
 // Initial load
     saveQuotes();
     showRandomQuote();
+}); */
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Load quotes from localstorage or use defaults
+    let quotes = JSON.parse(localStorage.getItem('quotes')) || [
+        {text: 'Education is power of success.', category: 'Education'},
+        {text: 'Learning never exhausts the mind.', category: 'Education'},
+        {text: 'Code is like humor.When you have to explain it.itis bad.', category: 'programming'},
+        {text: 'success is not final, failure ia not fatal.', category: 'Motivation'}
+    ];
+
+    // Select DOM elements
+
+    const quoteDisplay = document.getElementById('quoteDisplay');
+    const newQuoteBtn = document.getElementById('newQoute');
+    const categoryFilter = document.getElementById('categoryFilter');
+
+    // Save quotes
+    function saveQuotes(params) {
+      localStorage.setItem('quotes', JSON.stringify(quotes));
+    }
+    
+    // POPULATE CATEGORIES
+
+    function populateCategories(params) {
+        categoryFilter.innerHTML= '<option value="all"> All Categories </option>'
+        const categories = [];
+        quotes.forEach(function (quote) {
+            if (!categories.includes(quote.category)){
+                categories.push(quote.category);
+            }
+        });
+        
+        categories.forEach(function (category) {
+            const option = document.createElement('option');
+            option.value = category;
+            option.textContent = category;
+            categoryFilter.appendChild(option);
+        });
+        const savedFilter = localStorage.getItem('selectedCategory');
+        if (savedFilter) {
+            categoryFilter.value = savedFilter;
+        }
+    }
+    // FILTER QUOTES
+
+    function filterQuotes(params) {
+       const selectedCategory = categoryFilter.value;
+       
+       localStorage.setItem('selectedCategory', selectedCategory);
+
+       quoteDisplay.innerHTML = '';
+       const filteredQuotes = selectedCategory === 'all' ? quotes  : quotes.filter(function (quote) {
+        return quote.category === selectedCategory;
+       });
+
+       filteredQuotes.forEach(function (quote) {
+        const p = document.createElement('p');
+        p.textContent = quote.text;
+
+        const small = document.createElement('small');
+        small.textContent = 'Category: ' + quote.category;
+
+        quoteDisplay.appendChild(p);
+        quoteDisplay.appendChild(small);
+       });
+
+    }
+    // Show random quote (still needed)
+    function showRandomQuote(params) {
+        const index = Math.floor(Math.random() * quotes.length);
+        quoteDisplay,innerHTML = '';
+
+        const p = document.createElement('p')
+            p.textContent = quotes[index].text;
+
+            const small = document.createElement('small');
+            small.textContent = 'Category: ' + quotes[index].category;
+
+            quoteDisplay.appendChild(p);
+            quoteDisplay.appendChild(small);
+        
+    }
+
+    // Events listner
+
+    newQuoteBtn.addEventListener('click', showRandomQuote);
+    categoryFilter.addEventListener('change', filteredQuotes);
+
+    //Init
+
+    saveQuotes();
+
+    populateCategories();
+
+    filterQuotes();
 });
